@@ -1,0 +1,11 @@
+caso00010.txt: 3
+caso00020.txt: 5
+caso00050.txt: 8
+caso00100.txt: 12
+caso00200.txt: 17
+caso00300.txt: 20
+caso00500.txt: 24
+caso01000.txt: 32
+caso02000.txt: 42
+caso05000.txt: 59
+caso10000.txt: 76
