@@ -1,9 +1,3 @@
-# Ideia inicial: 
-# Ler todo o arquivo de entrada colocando cada vértice em uma lista e ordenando as dimenções da caixinha.
-# Após, descobrir quem é a maior/menor caixa.
-# Depois, comparar cada caixinha da lista entre si vendo cque mcabe em quem.
-# Montar grafo :)
-
 class Graph:
     def __init__(self, *args):
         self.graph = {}
