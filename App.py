@@ -94,11 +94,66 @@ class Digraph(Graph):
         sb += "}" + NEWLINE
         return sb
 
+## Função de caminhamento
+class DepthFirstSearch:
+    def __init__(self, g, s):
+        self.s = s
+        self.marked = {}
+        self.edgeTo = {}
+        self.depth = {}  # Dicionário para armazenar a profundidade de cada vértice
+        self.__dfs(g, s, 0)  # Começa a busca com profundidade 0
+
+    def hasPathTo(self, v):
+        return v in self.marked
+
+    def pathTo(self, v):
+        if not self.hasPathTo(v):
+            return None
+        
+        path = []
+        while v != self.s:
+            path.insert(0, v)
+            v = self.edgeTo[v]
+        path.insert(0, self.s)
+        return path
+
+    def __dfs(self, g, s, depth):
+        self.marked[s] = True
+        self.depth[s] = depth  # Armazena a profundidade do vértice s
+
+        for w in g.getAdj(s):
+            if w not in self.marked:
+                self.edgeTo[w] = s
+                self.__dfs(g, w, depth + 1)  # Incrementa a profundidade para o próximo vértice
+
+    def maxDepthPath(self):
+        max_depth = -1
+        max_depth_vertex = None
+
+        for v in self.marked:
+            if self.depth[v] > max_depth:
+                max_depth = self.depth[v]
+                max_depth_vertex = v
+        
+        return self.pathTo(max_depth_vertex)
+
 ## >>> Main <<3
 if __name__ == "__main__":
-    caminho_arquivo = 'catalogos/caso00010.txt'
+    caminho_arquivo = 'catalogos/exemplo.txt'
 
     g = Digraph(caminho_arquivo)
+
+    dfs = DepthFirstSearch(g, "8")
+    max_path = dfs.maxDepthPath()
+    print("Caminho máximo em termos de profundidade:", max_path)
+
+    #for v in g.getVerts():
+    #    print(f"{v}: ", end="")
+    #    if dfs.hasPathTo(v):
+    #        for w in dfs.pathTo(v):
+    #            print(f"{w} ", end="")
+    #    print()
+    #print()
 
     #for v in g.getVerts():
     #    print(f"{v}: ", end="")
@@ -106,7 +161,7 @@ if __name__ == "__main__":
     #        print(f"{w} ", end="")
     #    print()
     #print()
-    
+
     # Código DOT do grafo, coloque no site http://www.webgraphviz.com/ para
     # visualizar o grafo e suas ligações :)
     print(g.toDot())
