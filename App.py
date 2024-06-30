@@ -1,17 +1,5 @@
-
-# Ideia inicial: 
-# Ler todo o arquivo de entrada colocando cada vértice em uma lista e ordenando as dimenções da caixinha.
-# Após, descobrir quem é a maior/menor caixa.
-# Depois, comparar cada caixinha da lista entre si vendo cque mcabe em quem.
-# Montar grafo :)
-
-# O que fiz:
-# Li todo o arquivo e já ordenei as dimensões em decrescente
-# Montei o grafo já fazendo comparações
-# Próximas tarefas:
-# Queria criar os grafos igual o sor (com as dimensões não ordenadas)
-# Método para descobrir a maior sequência de caixas (provavelmente usando dfs)
-
+import os
+from time import process_time
 # Função para ler os arquivos e ordenar as dimensões das caixas
 def leitor(caminho_arquivo):
     caixas = []
@@ -61,20 +49,6 @@ class Graph:
     def getVerts(self):
         return self.vertices
     
-    def toDot(self):
-        NEWLINE = '\n'
-        sb = "digraph {" + NEWLINE
-        sb += "rankdir = TB;" + NEWLINE
-        sb += "node [shape = ellipse];" + NEWLINE
-        for v in sorted(self.getVerts()):
-            label = ' '.join(map(str, self.caixas[int(v)]))
-            sb += f'{v} [label="{label}"]' + NEWLINE
-        for v in sorted(self.getVerts()):
-            for w in self.getAdj(v):
-                sb += v + " -> " + w + NEWLINE
-        sb += "}" + NEWLINE
-        return sb
-
 # Classe Digraph herdada de Graph
 class Digraph(Graph):
     def addEdge(self, v, w):
@@ -122,31 +96,42 @@ class DepthFirstSearch:
         self.depth[s] = depth  # Armazena a profundidade do vértice s
 
         for w in g.getAdj(s):
-            if w not in self.marked:
-                self.edgeTo[w] = s
+            if self.depth.get(w, -1) < depth + 1:
+                self.edgeTo[w] = s  # Atualiza só se o caminho for maior
                 self.__dfs(g, w, depth + 1)  # Incrementa a profundidade para o próximo vértice
 
     def maxDepthPath(self):
         max_depth = -1
         max_depth_vertex = None
-
         for v in self.marked:
             if self.depth[v] > max_depth:
                 max_depth = self.depth[v]
                 max_depth_vertex = v
-        
         return self.pathTo(max_depth_vertex)
+    
+    def maxDepth(self):
+        return max(self.depth.values(), default=-1)+1
 
 ## >>> Main <<3
 if __name__ == "__main__":
-    caminho_arquivo = 'catalogos/exemplo.txt'
+    start = process_time()
+    caminho_arquivo = 'catalogos/caso02000.txt'
 
     g = Digraph(caminho_arquivo)
 
-    dfs = DepthFirstSearch(g, "8")
-    max_path = dfs.maxDepthPath()
-    print("Caminho máximo em termos de profundidade:", max_path)
+    maiorSeq = []
+    
+    maior = 0
+    for vertice in g.getVerts():
+        dfs = DepthFirstSearch(g, vertice)
+        max_path = dfs.maxDepthPath()
+        if maior < dfs.maxDepth():
+            maior = dfs.maxDepth()
+        if len(max_path) > len(maiorSeq):
+            maiorSeq = max_path
 
+    print("Quantidade de caixas:", maior)
+    
     #for v in g.getVerts():
     #    print(f"{v}: ", end="")
     #    if dfs.hasPathTo(v):
@@ -164,4 +149,7 @@ if __name__ == "__main__":
 
     # Código DOT do grafo, coloque no site http://www.webgraphviz.com/ para
     # visualizar o grafo e suas ligações :)
-    print(g.toDot())
+    #print(g.toDot())
+    end = process_time()
+    t = end-start
+    print("Tempo de execução: " + str(t)+"s")
