@@ -1,17 +1,3 @@
-
-# Ideia inicial: 
-# Ler todo o arquivo de entrada colocando cada vértice em uma lista e ordenando as dimenções da caixinha.
-# Após, descobrir quem é a maior/menor caixa.
-# Depois, comparar cada caixinha da lista entre si vendo cque mcabe em quem.
-# Montar grafo :)
-
-# O que fiz:
-# Li todo o arquivo e já ordenei as dimensões em decrescente
-# Montei o grafo já fazendo comparações
-# Próximas tarefas:
-# Queria criar os grafos igual o sor (com as dimensões não ordenadas)
-# Método para descobrir a maior sequência de caixas (provavelmente usando dfs)
-
 # Função para ler os arquivos e ordenar as dimensões das caixas
 def leitor(caminho_arquivo):
     caixas = []
@@ -36,10 +22,13 @@ class Graph:
        
     def __readFromFile(self, filename):
         self.caixas = leitor(filename)
+        print(f"Caixas lidas: {self.caixas}")  # Adicionado para depuração
         for i in range(len(self.caixas)):
             for j in range(len(self.caixas)):
                 if i != j and self.__cabeDentro(self.caixas[i], self.caixas[j]):
                     self.addEdge(str(i), str(j))
+        print(f"Vértices: {self.vertices}")  # Adicionado para depuração
+        print(f"Grafo: {self.graph}")  # Adicionado para depuração
 
     def __cabeDentro(self, caixa1, caixa2):
         # Verifica se todas as dimensões da caixa1 são menores que as dimensões da caixa2
@@ -136,6 +125,9 @@ class DepthFirstSearch:
                 max_depth_vertex = v
         
         return self.pathTo(max_depth_vertex)
+    
+    def maxDepth(self):
+        return max(self.depth.values(), default=-1)
 
 ## >>> Main <<3
 if __name__ == "__main__":
@@ -143,10 +135,15 @@ if __name__ == "__main__":
 
     g = Digraph(caminho_arquivo)
 
-    dfs = DepthFirstSearch(g, "8")
-    max_path = dfs.maxDepthPath()
-    print("Caminho máximo em termos de profundidade:", max_path)
+    maiorSeq = []
+    for vertice in g.getVerts():
+        dfs = DepthFirstSearch(g, vertice)
+        max_path = dfs.maxDepthPath()
+        if len(max_path) > len(maiorSeq):
+            maiorSeq = max_path
 
+    print("Caminho máximo em termos de profundidade:", maiorSeq)
+    
     #for v in g.getVerts():
     #    print(f"{v}: ", end="")
     #    if dfs.hasPathTo(v):
