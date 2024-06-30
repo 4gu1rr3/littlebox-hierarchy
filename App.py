@@ -1,15 +1,15 @@
 import os
 from time import process_time
-# Função para ler os arquivos e ordenar as dimensões das caixas
+
+## Função para ler os arquivos e ordenar as dimensões das caixas
 def leitor(caminho_arquivo):
     caixas = []
     with open(caminho_arquivo, 'r') as arquivo:
         for linha in arquivo:
-            # Dividir a linha em três números inteiros concatenados
+            # Divide a linha em três números inteiros concatenados
             dimensoes = list(map(int, linha.strip().split()))
-            # Ordenar as dimensões em ordem decrescente
+            # Ordena as dimensões em ordem decrescente
             dimensoes.sort(reverse=True)
-            # Adicionar as dimensões ordenadas à lista de caixas
             caixas.append(dimensoes)
     return caixas
 
@@ -22,10 +22,12 @@ class Graph:
         if len(args) == 1:
             self.__readFromFile(args[0])
        
+    # Função para ler as caixas a partir de um arquivo
     def __readFromFile(self, filename):
         self.caixas = leitor(filename)
         for i in range(len(self.caixas)):
-            for j in range(len(self.caixas)):
+            for j in range(len(self.caixas)): 
+                # Verifica se a caixa i cabe dentro da caixa j
                 if i != j and self.__cabeDentro(self.caixas[i], self.caixas[j]):
                     self.addEdge(str(i), str(j))
 
@@ -98,8 +100,9 @@ class DepthFirstSearch:
         for w in g.getAdj(s):
             if self.depth.get(w, -1) < depth + 1:
                 self.edgeTo[w] = s  # Atualiza só se o caminho for maior
-                self.__dfs(g, w, depth + 1)  # Incrementa a profundidade para o próximo vértice
+                self.__dfs(g, w, depth + 1) 
 
+    # Função que retorna o caminho de maior profundidade
     def maxDepthPath(self):
         max_depth = -1
         max_depth_vertex = None
@@ -109,18 +112,18 @@ class DepthFirstSearch:
                 max_depth_vertex = v
         return self.pathTo(max_depth_vertex)
     
+    # Função que retorna a maior profundidade + 1 (quantidade de caixas)
     def maxDepth(self):
-        return max(self.depth.values(), default=-1)+1
+        return max(self.depth.values(), default=-1) + 1
 
 ## >>> Main <<3
 if __name__ == "__main__":
     start = process_time()
-    caminho_arquivo = 'catalogos/caso02000.txt'
+    caminho_arquivo = 'catalogos/caso00010.txt' 
 
     g = Digraph(caminho_arquivo)
 
     maiorSeq = []
-    
     maior = 0
     for vertice in g.getVerts():
         dfs = DepthFirstSearch(g, vertice)
@@ -132,6 +135,7 @@ if __name__ == "__main__":
 
     print("Quantidade de caixas:", maior)
     
+    # Descomentar para imprimir os caminhos
     #for v in g.getVerts():
     #    print(f"{v}: ", end="")
     #    if dfs.hasPathTo(v):
@@ -140,6 +144,7 @@ if __name__ == "__main__":
     #    print()
     #print()
 
+    # Descomentar para imprimir as adjacências
     #for v in g.getVerts():
     #    print(f"{v}: ", end="")
     #    for w in g.getAdj(v):
